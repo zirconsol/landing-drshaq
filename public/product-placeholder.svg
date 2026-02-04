@@ -1,0 +1,6 @@
+<svg width="800" height="1000" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="1000" rx="40" fill="#0C2233"/>
+  <rect x="90" y="120" width="620" height="760" rx="30" stroke="#1F509D" stroke-width="3" opacity="0.6"/>
+  <text x="120" y="220" font-family="Montserrat, Arial" font-size="44" fill="#FFFFFF" opacity="0.7">DROP</text>
+  <text x="120" y="280" font-family="Montserrat, Arial" font-size="20" fill="#C4CDD4" opacity="0.9">Producto</text>
+</svg>
