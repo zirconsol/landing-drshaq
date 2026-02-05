@@ -2,16 +2,51 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Header() {
   const [isSolid, setIsSolid] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const [drawerDropsOpen, setDrawerDropsOpen] = useState(false);
+  const pathname = usePathname();
 
-  const navItems = [
-    { label: "Noticias", href: "#noticias" },
-    { label: "Catálogo", href: "#catalogo" },
-  ];
+  if (pathname?.startsWith("/drops")) {
+    return null;
+  }
+
+  const navItems = [{ label: "Noticias", href: "#noticias" }];
+
+  const dropSections = useMemo(
+    () => [
+      {
+        label: "Montaña",
+        slug: "montana",
+        items: ["Remeras", "Pantalones", "Hoodies"],
+      },
+      {
+        label: "Ye Apparel",
+        slug: "ye-apparel",
+        items: ["Remeras", "Pantalones", "Hoodies"],
+      },
+      {
+        label: "Camperas",
+        slug: "camperas",
+        items: ["Livianas", "Abrigo"],
+      },
+    ],
+    []
+  );
+
+  const toggleSection = (label: string) => {
+    setOpenSections((current) => ({
+      ...current,
+      [label]: !current[label],
+    }));
+  };
 
   useEffect(() => {
     const hero = document.querySelector(".hero");
@@ -36,6 +71,29 @@ export default function Header() {
 
     return () => {
       observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      if (!dropdownRef.current) return;
+      if (!dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
     };
   }, []);
 
@@ -64,6 +122,46 @@ export default function Header() {
               </a>
             )
           )}
+          <div
+            ref={dropdownRef}
+            className={`nav-item nav-item-dropdown ${
+              dropdownOpen ? "is-open" : ""
+            }`}
+          >
+            <button
+              className="nav-trigger"
+              type="button"
+              aria-expanded={dropdownOpen}
+              aria-haspopup="true"
+              onClick={() => setDropdownOpen((open) => !open)}
+            >
+              Drops
+              <span className="nav-caret" aria-hidden="true">
+                ↓
+              </span>
+            </button>
+            <div className="nav-dropdown">
+              {dropSections.map((section) => (
+                <div key={section.label} className="nav-dropdown-group">
+                  <span className="nav-dropdown-title">{section.label}</span>
+                  <div className="nav-dropdown-links">
+                    {section.items.map((item) => (
+                      <Link
+                        key={item}
+                        href={`/drops/${section.slug}?cat=${encodeURIComponent(
+                          item.toLowerCase()
+                        )}`}
+                        className="nav-dropdown-link"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        {item}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </nav>
         <button
           className="menu-button"
@@ -107,9 +205,66 @@ export default function Header() {
           </button>
         </div>
         <nav className="nav-drawer-links">
+          <button
+            className={`nav-drawer-root ${
+              drawerDropsOpen ? "is-open" : ""
+            }`}
+            type="button"
+            aria-expanded={drawerDropsOpen}
+            onClick={() => setDrawerDropsOpen((open) => !open)}
+          >
+            Drops
+            <span className="nav-drawer-caret" aria-hidden="true">
+              ↓
+            </span>
+          </button>
+
+          <div
+            className={`nav-drawer-group ${
+              drawerDropsOpen ? "is-open" : ""
+            }`}
+          >
+            {dropSections.map((section) => (
+              <div
+                key={section.label}
+                className={`nav-drawer-subgroup ${
+                  openSections[section.label] ? "is-open" : ""
+                }`}
+              >
+                <button
+                  className="nav-drawer-label"
+                  type="button"
+                  aria-expanded={!!openSections[section.label]}
+                  onClick={() => toggleSection(section.label)}
+                >
+                  {section.label}
+                  <span className="nav-drawer-caret" aria-hidden="true">
+                    ↓
+                  </span>
+                </button>
+                <div className="nav-drawer-items">
+                  {section.items.map((item) => (
+                    <Link
+                      key={item}
+                      href={`/drops/${section.slug}?cat=${encodeURIComponent(
+                        item.toLowerCase()
+                      )}`}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {item}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
           {navItems.map((item) =>
             item.href.startsWith("/") ? (
-              <Link key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+              >
                 {item.label}
               </Link>
             ) : (

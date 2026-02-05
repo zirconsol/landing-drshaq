@@ -1,7 +1,27 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import ProductCard from "@/components/ProductCard";
-import { products } from "@/data/products";
+import CategoryGrid from "@/components/CategoryGrid";
+
+const categories = [
+  {
+    name: "Montaña",
+    image: "/mountain-placeholder.jpg",
+    description: "Urbano con clima frío.",
+    href: "/drops/montana",
+  },
+  {
+    name: "Ye Apparel",
+    image: "/ye-placeholder.jpg",
+    description: "Street clean y premium.",
+    href: "/drops/ye-apparel",
+  },
+  {
+    name: "Camperas",
+    image: "/jacket-placeholder.jpg",
+    description: "Capas para la noche.",
+    href: "/drops/camperas",
+  },
+];
 
 export default function HomePage() {
   const heroStyle = {
@@ -32,11 +52,7 @@ export default function HomePage() {
             <h2 className="section-title">Drops disponibles</h2>
           </div>
         </div>
-        <div className="container catalog-grid">
-          {products.map((product) => (
-            <ProductCard key={product.slug} product={product} />
-          ))}
-        </div>
+        <CategoryGrid categories={categories} />
       </section>
 
       <section
@@ -45,6 +61,7 @@ export default function HomePage() {
         style={{ "--news-image": "url('/news-placeholder.jpg')" } as CSSProperties}
       >
         <div className="container news-content">
+          <span className="news-pill">Noticias</span>
           <h2 className="section-title">BADBO 1.0 · Brown</h2>
           <p className="section-copy">
           Adidas y Bad Bunny lanzaron por sorpresa las BadBo 1.0 “Brown”,
