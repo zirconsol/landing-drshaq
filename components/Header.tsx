@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Header() {
@@ -13,12 +13,20 @@ export default function Header() {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [drawerDropsOpen, setDrawerDropsOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const hideHeader = pathname?.startsWith("/drops");
 
-  if (pathname?.startsWith("/drops")) {
-    return null;
-  }
+  const navItems = [{ label: "Noticias", sectionId: "noticias" }];
 
-  const navItems = [{ label: "Noticias", href: "#noticias" }];
+  const goToSection = (sectionId: string) => {
+    if (pathname !== "/") {
+      router.push(`/#${sectionId}`);
+      return;
+    }
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const dropSections = useMemo(
     () => [
@@ -49,6 +57,10 @@ export default function Header() {
   };
 
   useEffect(() => {
+    if (hideHeader) {
+      return;
+    }
+
     const hero = document.querySelector(".hero");
 
     if (!hero) {
@@ -72,9 +84,13 @@ export default function Header() {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [hideHeader]);
 
   useEffect(() => {
+    if (hideHeader) {
+      return;
+    }
+
     const handleClick = (event: MouseEvent) => {
       if (!dropdownRef.current) return;
       if (!dropdownRef.current.contains(event.target as Node)) {
@@ -95,7 +111,11 @@ export default function Header() {
       document.removeEventListener("mousedown", handleClick);
       document.removeEventListener("keydown", handleKey);
     };
-  }, []);
+  }, [hideHeader]);
+
+  if (hideHeader) {
+    return null;
+  }
 
   return (
     <header className={`header ${isSolid ? "header-solid" : ""}`}>
@@ -111,17 +131,16 @@ export default function Header() {
           />
         </Link>
         <nav className="nav">
-          {navItems.map((item) =>
-            item.href.startsWith("/") ? (
-              <Link key={item.label} href={item.href}>
-                {item.label}
-              </Link>
-            ) : (
-              <a key={item.label} href={item.href}>
-                {item.label}
-              </a>
-            )
-          )}
+          {navItems.map((item) => (
+            <button
+              key={item.label}
+              className="nav-link-btn"
+              type="button"
+              onClick={() => goToSection(item.sectionId)}
+            >
+              {item.label}
+            </button>
+          ))}
           <div
             ref={dropdownRef}
             className={`nav-item nav-item-dropdown ${
@@ -258,21 +277,19 @@ export default function Header() {
               </div>
             ))}
           </div>
-          {navItems.map((item) =>
-            item.href.startsWith("/") ? (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>
-                {item.label}
-              </a>
-            )
-          )}
+          {navItems.map((item) => (
+            <button
+              key={item.label}
+              className="nav-link-btn"
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                goToSection(item.sectionId);
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
         </nav>
       </aside>
     </header>

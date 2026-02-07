@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CatalogMenu from "@/components/CatalogMenu";
+import CatalogProducts from "@/components/CatalogProducts";
 import { catalogItems, drops } from "@/data/drops";
 
 export function generateStaticParams() {
@@ -15,17 +16,29 @@ export default async function DropPage({
   params,
   searchParams,
 }: {
-  params: DropParams | Promise<DropParams>;
-  searchParams?: DropSearch | Promise<DropSearch>;
+  params: Promise<DropParams>;
+  searchParams?: Promise<DropSearch>;
 }) {
-  const resolvedParams = await Promise.resolve(params);
-  const resolvedSearch = await Promise.resolve(searchParams ?? {});
+  const resolvedParams = await params;
+  const resolvedSearch: DropSearch = (await searchParams) ?? {};
   const drop = drops.find((item) => item.slug === resolvedParams.slug);
   const selectedCategory = resolvedSearch.cat?.toLowerCase();
 
   if (!drop) {
     notFound();
   }
+
+  const itemsForDrop = catalogItems.map((item) => ({
+    ...item,
+    images:
+      drop.slug === "camperas"
+        ? [
+            "/images/nike-light/cover.png",
+            "/images/nike-light/01.png",
+            "/images/nike-light/02.png",
+          ]
+        : [item.image],
+  }));
 
   return (
     <div className="catalog-page">
@@ -120,28 +133,7 @@ export default async function DropPage({
           </div>
         </aside>
 
-        <section className="catalog-grid">
-          {catalogItems.map((item) => (
-            <article key={item.id} className="catalog-card">
-              <div className="catalog-card-media">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  fill
-                  sizes="(max-width: 900px) 50vw, 33vw"
-                  style={{ objectFit: "cover" }}
-                />
-                {item.tag ? (
-                  <span className="catalog-tag">{item.tag}</span>
-                ) : null}
-              </div>
-              <div className="catalog-card-body">
-                <h4>{item.name}</h4>
-                <span>{item.price}</span>
-              </div>
-            </article>
-          ))}
-        </section>
+        <CatalogProducts items={itemsForDrop} />
       </div>
     </div>
   );

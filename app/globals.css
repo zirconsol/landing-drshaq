@@ -121,6 +121,18 @@ button {
   padding-bottom: 4px;
 }
 
+.nav-link-btn {
+  position: relative;
+  padding-bottom: 4px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-transform: uppercase;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
 .nav a::after {
   content: "";
   position: absolute;
@@ -132,8 +144,20 @@ button {
   transition: width 0.2s ease;
 }
 
-.nav a:hover::after {
+.nav a:hover::after,
+.nav-link-btn:hover::after {
   width: 100%;
+}
+
+.nav-link-btn::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: var(--sky);
+  transition: width 0.2s ease;
 }
 
 .nav-item {
@@ -340,6 +364,10 @@ button {
   letter-spacing: 1px;
   font-size: 16px;
   padding-left: 20px;
+}
+
+.nav-drawer-links .nav-link-btn {
+  align-self: flex-start;
 }
 
 .nav-drawer-root {
@@ -1014,6 +1042,56 @@ button {
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 4;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.catalog-media-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.catalog-media-slide {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+}
+
+.catalog-media-fade {
+  display: none;
+  position: absolute;
+  inset: 0;
+}
+
+.catalog-media-fade-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+  transition: opacity 0.56s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.catalog-media-fade-hover {
+  opacity: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .catalog-card-media.is-swipe .catalog-media-track {
+    display: none;
+  }
+
+  .catalog-card-media.is-swipe .catalog-media-fade {
+    display: block;
+  }
+
+  .catalog-card-media.is-swipe:hover .catalog-media-fade-hover {
+    opacity: 1;
+  }
+
 }
 
 .catalog-tag {

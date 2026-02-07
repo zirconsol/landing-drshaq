@@ -64,10 +64,11 @@ export default function HomePage() {
           <span className="news-pill">Noticias</span>
           <h2 className="section-title">BADBO 1.0 · Brown</h2>
           <p className="section-copy">
-          Adidas y Bad Bunny lanzaron por sorpresa las BadBo 1.0 “Brown”,
-          <></> una edición ultra limitada de solo 1.994 pares numerados.
-          El modelo se agotó en cerca de una hora, confirmando el impacto del primer diseño propio del artista.
-          Para quienes quedaron afuera, ya se anticipó el próximo colorway: “Resiliencia White”.
+            Adidas y Bad Bunny lanzaron por sorpresa las BadBo 1.0 “Brown”,
+            una edición ultra limitada de solo 1.994 pares numerados. El
+            modelo se agotó en cerca de una hora, confirmando el impacto del
+            primer diseño propio del artista. Para quienes quedaron afuera, ya
+            se anticipó el próximo colorway: “Resiliencia White”.
           </p>
           <div className="hero-actions">
             <Link className="button-secondary" href="/blog">
