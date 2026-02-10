@@ -162,7 +162,13 @@ export default function Header() {
             <div className="nav-dropdown">
               {dropSections.map((section) => (
                 <div key={section.label} className="nav-dropdown-group">
-                  <span className="nav-dropdown-title">{section.label}</span>
+                  <Link
+                    href={`/drops/${section.slug}`}
+                    className="nav-dropdown-title"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    {section.label}
+                  </Link>
                   <div className="nav-dropdown-links">
                     {section.items.map((item) => (
                       <Link

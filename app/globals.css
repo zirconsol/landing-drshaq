@@ -867,8 +867,12 @@ button {
 
 .catalog-header {
   width: 100%;
-  position: relative;
-  z-index: 12;
+  position: sticky;
+  top: 0;
+  z-index: 18;
+  background: rgba(7, 25, 35, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .catalog-topbar {
@@ -891,7 +895,7 @@ button {
 }
 
 .catalog-logo-image {
-  height: 72px;
+  height: 105px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -1356,6 +1360,11 @@ button {
 }
 
 .catalog-filters {
+  position: sticky;
+  top: 118px;
+  align-self: start;
+  max-height: calc(100dvh - 132px);
+  overflow: auto;
   background: #0c2233;
   border-radius: 18px;
   padding: 20px;
@@ -1418,10 +1427,22 @@ button {
 }
 
 .catalog-card {
+  position: relative;
   background: #0c2233;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.catalog-card:hover {
+  border-color: rgba(1, 125, 199, 0.4);
+}
+
+.catalog-card:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: 2px;
 }
 
 .catalog-card-media {
@@ -1582,12 +1603,9 @@ button {
 
 .catalog-card-actions {
   margin-top: 8px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  display: flex;
 }
 
-.catalog-detail-link,
 .catalog-add-button {
   min-height: 34px;
   border-radius: 999px;
@@ -1595,15 +1613,12 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   text-transform: uppercase;
   font-size: 11px;
   letter-spacing: 0.8px;
   padding: 0 10px;
-}
-
-.catalog-detail-link {
-  background: transparent;
-  color: var(--gray);
+  width: 100%;
 }
 
 .catalog-add-button {
@@ -1611,6 +1626,33 @@ button {
   color: #fff;
   cursor: pointer;
   font-weight: 600;
+  transition: transform 0.16s ease, filter 0.2s ease, background 0.2s ease;
+}
+
+.catalog-add-button:hover {
+  filter: brightness(1.06);
+}
+
+.catalog-add-button:active {
+  transform: translateY(1px);
+}
+
+.catalog-add-button.is-added {
+  background: #0f8f62;
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.catalog-add-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 700;
 }
 
 .catalog-cart-bar {
@@ -1914,6 +1956,10 @@ button {
 
   .catalog-filters {
     order: 1;
+    position: static;
+    top: auto;
+    max-height: none;
+    overflow: visible;
   }
 
   .catalog-grid {
@@ -1966,6 +2012,13 @@ button {
   }
 }
 
+@media (min-width: 901px) and (max-width: 1080px) {
+  .catalog-filters {
+    top: 178px;
+    max-height: calc(100dvh - 192px);
+  }
+}
+
 @media (max-width: 720px) {
   .catalog-page {
     padding-top: 48px;
@@ -1985,7 +2038,7 @@ button {
   }
 
   .catalog-card-actions {
-    grid-template-columns: 1fr;
+    width: 100%;
   }
 
   .cart-drawer {

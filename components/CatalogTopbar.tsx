@@ -11,6 +11,7 @@ export default function CatalogTopbar() {
   const [cartOpen, setCartOpen] = useState(false);
   const [activeDropSlug, setActiveDropSlug] = useState<string | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
+  const previousBodyOverflowRef = useRef<string | null>(null);
 
   const activeDrop = useMemo(
     () => drops.find((drop) => drop.slug === activeDropSlug) ?? null,
@@ -33,16 +34,32 @@ export default function CatalogTopbar() {
   };
 
   useEffect(() => {
-    document.body.style.overflow = cartOpen ? "hidden" : "";
-    return () => {
+    if (cartOpen) {
+      if (previousBodyOverflowRef.current === null) {
+        previousBodyOverflowRef.current = document.body.style.overflow;
+      }
+      document.body.style.overflow = "hidden";
+      return;
+    }
+
+    if (previousBodyOverflowRef.current !== null) {
+      document.body.style.overflow = previousBodyOverflowRef.current;
+      previousBodyOverflowRef.current = null;
+    } else if (document.body.style.overflow === "hidden") {
       document.body.style.overflow = "";
-    };
+    }
   }, [cartOpen]);
 
   useEffect(() => {
     return () => {
       if (closeTimeoutRef.current !== null) {
         window.clearTimeout(closeTimeoutRef.current);
+      }
+      if (previousBodyOverflowRef.current !== null) {
+        document.body.style.overflow = previousBodyOverflowRef.current;
+        previousBodyOverflowRef.current = null;
+      } else if (document.body.style.overflow === "hidden") {
+        document.body.style.overflow = "";
       }
     };
   }, []);

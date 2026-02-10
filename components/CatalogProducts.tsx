@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { useCart } from "@/components/CartProvider";
 import { formatPrice, type CatalogItem } from "@/data/drops";
@@ -16,6 +16,7 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
   const [addedFeedback, setAddedFeedback] = useState<Record<string, boolean>>({});
   const touchStartX = useRef<Record<string, number>>({});
   const { addToCart } = useCart();
+  const router = useRouter();
 
   const supportsHover = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -72,6 +73,10 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
     if (delta < -threshold) setIndex(id, Math.max(current - 1, 0));
   };
 
+  const goToProduct = (productId: string) => {
+    router.push(`/drops/${dropSlug}/producto/${productId}`);
+  };
+
   return (
     <section className="catalog-grid">
       {items.map((item) => {
@@ -82,7 +87,20 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
         const selectedColorIndex = selectedColorMap[item.id] ?? 0;
 
         return (
-          <article key={item.id} className="catalog-card">
+          <article
+            key={item.id}
+            className="catalog-card"
+            role="link"
+            tabIndex={0}
+            aria-label={`Ver detalle de ${item.name}`}
+            onClick={() => goToProduct(item.id)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                goToProduct(item.id);
+              }
+            }}
+          >
             <div
               className={`catalog-card-media ${images.length > 1 ? "is-swipe" : ""}`}
               onMouseEnter={() => {
@@ -144,17 +162,13 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
               {item.tag ? <span className="catalog-tag">{item.tag}</span> : null}
             </div>
             <div className="catalog-card-body">
-              <h4>
-                <Link
-                  className="catalog-product-title-link"
-                  href={`/drops/${dropSlug}/producto/${item.id}`}
-                >
-                  {item.name}
-                </Link>
-              </h4>
+              <h4>{item.name}</h4>
               <span>{formatPrice(item.price)}</span>
 
-              <div className="catalog-card-options">
+              <div
+                className="catalog-card-options"
+                onClick={(event) => event.stopPropagation()}
+              >
                 <div className="catalog-size-picks">
                   {item.sizes.map((size) => (
                     <button
@@ -163,7 +177,10 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
                       className={`catalog-size-chip ${
                         selectedSize === size ? "is-active" : ""
                       }`}
-                      onClick={() => setSelectedSize(item.id, size)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setSelectedSize(item.id, size);
+                      }}
                     >
                       {size}
                     </button>
@@ -178,7 +195,10 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
                       className={`catalog-color-chip ${
                         selectedColorIndex === index ? "is-active" : ""
                       }`}
-                      onClick={() => setSelectedColor(item.id, index)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setSelectedColor(item.id, index);
+                      }}
                     >
                       <span style={{ backgroundColor: color.hex }} />
                     </button>
@@ -186,19 +206,24 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
                 </div>
               </div>
 
-              <div className="catalog-card-actions">
-                <Link
-                  className="catalog-detail-link"
-                  href={`/drops/${dropSlug}/producto/${item.id}`}
-                >
-                  Ver detalle
-                </Link>
+              <div
+                className="catalog-card-actions"
+                onClick={(event) => event.stopPropagation()}
+              >
                 <button
                   type="button"
-                  className="catalog-add-button"
-                  onClick={() => handleAddToCart(item)}
+                  className={`catalog-add-button ${
+                    addedFeedback[item.id] ? "is-added" : ""
+                  }`}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleAddToCart(item);
+                  }}
                 >
-                  {addedFeedback[item.id] ? "Agregado" : "Agregar"}
+                  <span className="catalog-add-icon" aria-hidden="true">
+                    +
+                  </span>
+                  <span>Agregar al carrito</span>
                 </button>
               </div>
             </div>
