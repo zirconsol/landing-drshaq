@@ -85,20 +85,23 @@ button {
 }
 
 .header-inner {
+  /* Layout del header: mueve el logo horizontalmente cambiando justify-content/padding */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 0;
+  padding: 40px 30px;
   position: relative;
 }
 
 .logo {
+  /* Posicion del logo (desktop): usa margin o transform para desplazarlo */
   display: inline-flex;
   align-items: center;
   gap: 12px;
 }
 
 .logo-image {
+  /* Tamano del logo */
   height: 100px;
   width: auto;
   object-fit: contain;
@@ -109,7 +112,7 @@ button {
   display: flex;
   align-items: center;
   gap: 24px;
-  font-size: 13px;
+  font-size: 15px;
   text-transform: uppercase;
   letter-spacing: 1.4px;
   transform: translateX(-55px);
@@ -2924,6 +2927,7 @@ button {
     padding-right: 18px;
   }
   .header-inner {
+    /* Layout del header en mobile: hoy centra el logo */
     flex-direction: row;
     justify-content: center;
     align-items: center;
@@ -2948,6 +2952,7 @@ button {
   }
 
   .logo {
+    /* Posicion del logo en mobile */
     margin: 0 auto;
   }
 
