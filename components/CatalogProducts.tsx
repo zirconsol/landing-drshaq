@@ -1,16 +1,21 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
-import type { CatalogItem } from "@/data/drops";
+import { useCart } from "@/components/CartProvider";
+import { formatPrice, type CatalogItem } from "@/data/drops";
 
 type Props = {
-  items: Array<CatalogItem & { images?: string[] }>;
+  items: CatalogItem[];
+  dropSlug: string;
 };
 
-export default function CatalogProducts({ items }: Props) {
+export default function CatalogProducts({ items, dropSlug }: Props) {
   const [activeIndexes, setActiveIndexes] = useState<Record<string, number>>({});
+  const [addedFeedback, setAddedFeedback] = useState<Record<string, boolean>>({});
   const touchStartX = useRef<Record<string, number>>({});
+  const { addToCart } = useCart();
 
   const supportsHover = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -21,8 +26,40 @@ export default function CatalogProducts({ items }: Props) {
     setActiveIndexes((current) => ({ ...current, [id]: index }));
   };
 
+  const handleAddToCart = (item: CatalogItem) => {
+    const selectedSize = selectedSizeMap[item.id] ?? item.sizes[0];
+    const selectedColorIndex = selectedColorMap[item.id] ?? 0;
+    const selectedColor = item.colors[selectedColorIndex] ?? item.colors[0];
+
+    addToCart({
+      product: item,
+      selectedSize,
+      selectedColor,
+    });
+    setAddedFeedback((current) => ({ ...current, [item.id]: true }));
+    window.setTimeout(
+      () => setAddedFeedback((current) => ({ ...current, [item.id]: false })),
+      1000
+    );
+  };
+
   const onTouchStart = (id: string, clientX: number) => {
     touchStartX.current[id] = clientX;
+  };
+
+  const [selectedSizeMap, setSelectedSizeMap] = useState<Record<string, string>>(
+    {}
+  );
+  const [selectedColorMap, setSelectedColorMap] = useState<Record<string, number>>(
+    {}
+  );
+
+  const setSelectedSize = (itemId: string, size: string) => {
+    setSelectedSizeMap((current) => ({ ...current, [itemId]: size }));
+  };
+
+  const setSelectedColor = (itemId: string, colorIndex: number) => {
+    setSelectedColorMap((current) => ({ ...current, [itemId]: colorIndex }));
   };
 
   const onTouchEnd = (id: string, clientX: number, maxIndex: number) => {
@@ -38,9 +75,11 @@ export default function CatalogProducts({ items }: Props) {
   return (
     <section className="catalog-grid">
       {items.map((item) => {
-        const images = item.images?.length ? item.images : [item.image];
+        const images = item.images.length ? item.images : [item.image];
         const maxIndex = images.length - 1;
         const activeIndex = Math.min(activeIndexes[item.id] ?? 0, maxIndex);
+        const selectedSize = selectedSizeMap[item.id] ?? item.sizes[0];
+        const selectedColorIndex = selectedColorMap[item.id] ?? 0;
 
         return (
           <article key={item.id} className="catalog-card">
@@ -105,8 +144,63 @@ export default function CatalogProducts({ items }: Props) {
               {item.tag ? <span className="catalog-tag">{item.tag}</span> : null}
             </div>
             <div className="catalog-card-body">
-              <h4>{item.name}</h4>
-              <span>{item.price}</span>
+              <h4>
+                <Link
+                  className="catalog-product-title-link"
+                  href={`/drops/${dropSlug}/producto/${item.id}`}
+                >
+                  {item.name}
+                </Link>
+              </h4>
+              <span>{formatPrice(item.price)}</span>
+
+              <div className="catalog-card-options">
+                <div className="catalog-size-picks">
+                  {item.sizes.map((size) => (
+                    <button
+                      key={`${item.id}-size-${size}`}
+                      type="button"
+                      className={`catalog-size-chip ${
+                        selectedSize === size ? "is-active" : ""
+                      }`}
+                      onClick={() => setSelectedSize(item.id, size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                <div className="catalog-color-picks">
+                  {item.colors.map((color, index) => (
+                    <button
+                      key={`${item.id}-color-${color.name}`}
+                      type="button"
+                      aria-label={color.name}
+                      className={`catalog-color-chip ${
+                        selectedColorIndex === index ? "is-active" : ""
+                      }`}
+                      onClick={() => setSelectedColor(item.id, index)}
+                    >
+                      <span style={{ backgroundColor: color.hex }} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="catalog-card-actions">
+                <Link
+                  className="catalog-detail-link"
+                  href={`/drops/${dropSlug}/producto/${item.id}`}
+                >
+                  Ver detalle
+                </Link>
+                <button
+                  type="button"
+                  className="catalog-add-button"
+                  onClick={() => handleAddToCart(item)}
+                >
+                  {addedFeedback[item.id] ? "Agregado" : "Agregar"}
+                </button>
+              </div>
             </div>
           </article>
         );

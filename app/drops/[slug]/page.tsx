@@ -1,9 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import CatalogMenu from "@/components/CatalogMenu";
 import CatalogProducts from "@/components/CatalogProducts";
-import { catalogItems, drops } from "@/data/drops";
+import CatalogTopbar from "@/components/CatalogTopbar";
+import { drops, getDropCatalogItems } from "@/data/drops";
 
 export function generateStaticParams() {
   return drops.map((drop) => ({ slug: drop.slug }));
@@ -28,44 +27,11 @@ export default async function DropPage({
     notFound();
   }
 
-  const itemsForDrop = catalogItems.map((item) => ({
-    ...item,
-    images:
-      drop.slug === "camperas"
-        ? [
-            "/images/nike-light/cover.png",
-            "/images/nike-light/01.png",
-            "/images/nike-light/02.png",
-          ]
-        : [item.image],
-  }));
+  const itemsForDrop = getDropCatalogItems(drop.slug, selectedCategory);
 
   return (
     <div className="catalog-page">
-      <header className="catalog-topbar">
-        <Link href="/" className="catalog-logo">
-          <Image
-            src="/logo-placeholder.png"
-            alt="Dr. Shaq"
-            width={180}
-            height={60}
-            className="catalog-logo-image"
-            priority
-          />
-        </Link>
-        <div className="catalog-search">
-          <span className="catalog-search-icon">⌕</span>
-          <input
-            type="text"
-            placeholder="Buscar"
-            aria-label="Buscar en el catalogo"
-          />
-        </div>
-        <button className="catalog-cart" type="button" aria-label="Carrito">
-          <span>🛒</span>
-        </button>
-        <CatalogMenu />
-      </header>
+      <CatalogTopbar />
 
       <section className="catalog-hero">
         <div className="catalog-hero-media">
@@ -133,7 +99,19 @@ export default async function DropPage({
           </div>
         </aside>
 
-        <CatalogProducts items={itemsForDrop} />
+        {itemsForDrop.length > 0 ? (
+          <CatalogProducts items={itemsForDrop} dropSlug={drop.slug} />
+        ) : (
+          <section className="catalog-grid">
+            <article className="catalog-card">
+              <div className="catalog-card-body">
+                <h4>Sin resultados</h4>
+                <span>Probá otra subcategoría para ver productos disponibles.</span>
+              </div>
+            </article>
+          </section>
+        )}
+
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/components/CartProvider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -23,11 +24,13 @@ export default function RootLayout({
   return (
     <html lang="es" className={body.variable}>
       <body>
-        <div className="page">
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </div>
+        <CartProvider>
+          <div className="page">
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </div>
+        </CartProvider>
       </body>
     </html>
   );
