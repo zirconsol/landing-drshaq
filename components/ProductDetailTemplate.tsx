@@ -47,7 +47,14 @@ export default function ProductDetailTemplate({
               onClick={() => setActiveImage(index)}
               aria-label={`Ver imagen ${index + 1}`}
             >
-              <Image src={src} alt="" fill sizes="80px" style={{ objectFit: "cover" }} />
+              <Image
+                src={src}
+                alt=""
+                fill
+                sizes="80px"
+                style={{ objectFit: "cover" }}
+                unoptimized
+              />
             </button>
           ))}
         </div>
@@ -59,6 +66,7 @@ export default function ProductDetailTemplate({
             sizes="(max-width: 900px) 100vw, 55vw"
             style={{ objectFit: "cover" }}
             priority
+            unoptimized
           />
         </div>
       </div>

@@ -6,9 +6,7 @@ import { getCatalogProductById } from "@/lib/catalog-api";
 
 type Params = { slug: string; productId: string };
 
-export function generateStaticParams() {
-  return [];
-}
+export const dynamic = "force-dynamic";
 
 export default async function ProductPage({
   params,

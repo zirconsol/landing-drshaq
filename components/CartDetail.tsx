@@ -65,6 +65,7 @@ export default function CartDetail() {
                   fill
                   sizes="112px"
                   style={{ objectFit: "cover" }}
+                  unoptimized
                 />
               </div>
 

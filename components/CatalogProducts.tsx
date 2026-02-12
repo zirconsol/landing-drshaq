@@ -131,6 +131,7 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
                       fill
                       sizes="(max-width: 900px) 50vw, 33vw"
                       style={{ objectFit: "cover" }}
+                      unoptimized
                     />
                   </div>
                   <div className="catalog-media-fade-layer catalog-media-fade-hover">
@@ -140,6 +141,7 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
                       fill
                       sizes="(max-width: 900px) 50vw, 33vw"
                       style={{ objectFit: "cover" }}
+                      unoptimized
                     />
                   </div>
                 </div>
@@ -158,6 +160,7 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
                       fill
                       sizes="(max-width: 900px) 50vw, 33vw"
                       style={{ objectFit: "cover" }}
+                      unoptimized
                     />
                   </div>
                 ))}

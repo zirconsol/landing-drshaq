@@ -80,6 +80,7 @@ export default function CatalogCartDrawer({
                     fill
                     sizes="88px"
                     style={{ objectFit: "cover" }}
+                    unoptimized
                   />
                 </div>
 

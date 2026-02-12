@@ -58,6 +58,7 @@ export default function CatalogCartPanel() {
                   fill
                   sizes="64px"
                   style={{ objectFit: "cover" }}
+                  unoptimized
                 />
               </div>
               <div className="catalog-cart-panel-info">
