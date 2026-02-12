@@ -2,7 +2,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import CatalogProducts from "@/components/CatalogProducts";
 import CatalogTopbar from "@/components/CatalogTopbar";
-import { drops, getDropCatalogItems } from "@/data/drops";
+import { drops } from "@/data/drops";
+import { getCatalogItemsForDrop } from "@/lib/catalog-api";
 
 export function generateStaticParams() {
   return drops.map((drop) => ({ slug: drop.slug }));
@@ -27,7 +28,10 @@ export default async function DropPage({
     notFound();
   }
 
-  const itemsForDrop = getDropCatalogItems(drop.slug, selectedCategory);
+  const itemsForDrop = await getCatalogItemsForDrop(
+    drop.slug,
+    selectedCategory
+  );
 
   return (
     <div className="catalog-page">

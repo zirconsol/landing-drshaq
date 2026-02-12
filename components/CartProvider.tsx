@@ -9,6 +9,10 @@ import {
   type ReactNode,
 } from "react";
 import type { CatalogItem, ProductColor } from "@/data/drops";
+import {
+  trackPublicEvent,
+  type PublicEventSource,
+} from "@/lib/public-analytics";
 
 const STORAGE_KEY = "drshaq-cart-v1";
 
@@ -30,6 +34,7 @@ type AddToCartInput = {
   quantity?: number;
   selectedSize?: string;
   selectedColor?: ProductColor;
+  source?: PublicEventSource;
 };
 
 type CartContextValue = {
@@ -76,6 +81,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     quantity = 1,
     selectedSize,
     selectedColor,
+    source = "product_card",
   }: AddToCartInput) => {
     const lineKey = buildLineKey(product.id, selectedSize, selectedColor?.name);
 
@@ -105,6 +111,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         },
       ];
     });
+
+    void trackPublicEvent("add_to_request", source, { productId: product.id });
   };
 
   const removeLine = (key: string) => {
@@ -155,4 +163,3 @@ export function useCart() {
   }
   return context;
 }
-

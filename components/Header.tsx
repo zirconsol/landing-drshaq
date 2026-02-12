@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { trackPublicEvent } from "@/lib/public-analytics";
 
 export default function Header() {
   const [isSolid, setIsSolid] = useState(false);
@@ -136,7 +137,10 @@ export default function Header() {
               key={item.label}
               className="nav-link-btn"
               type="button"
-              onClick={() => goToSection(item.sectionId)}
+              onClick={() => {
+                void trackPublicEvent("cta_click", "nav_cta");
+                goToSection(item.sectionId);
+              }}
             >
               {item.label}
             </button>
@@ -165,7 +169,10 @@ export default function Header() {
                   <Link
                     href={`/drops/${section.slug}`}
                     className="nav-dropdown-title"
-                    onClick={() => setDropdownOpen(false)}
+                    onClick={() => {
+                      void trackPublicEvent("cta_click", "nav_cta");
+                      setDropdownOpen(false);
+                    }}
                   >
                     {section.label}
                   </Link>
@@ -177,7 +184,10 @@ export default function Header() {
                           item.toLowerCase()
                         )}`}
                         className="nav-dropdown-link"
-                        onClick={() => setDropdownOpen(false)}
+                        onClick={() => {
+                          void trackPublicEvent("cta_click", "nav_cta");
+                          setDropdownOpen(false);
+                        }}
                       >
                         {item}
                       </Link>
@@ -274,7 +284,10 @@ export default function Header() {
                       href={`/drops/${section.slug}?cat=${encodeURIComponent(
                         item.toLowerCase()
                       )}`}
-                      onClick={() => setMenuOpen(false)}
+                      onClick={() => {
+                        void trackPublicEvent("cta_click", "nav_cta");
+                        setMenuOpen(false);
+                      }}
                     >
                       {item}
                     </Link>
@@ -290,6 +303,7 @@ export default function Header() {
               type="button"
               onClick={() => {
                 setMenuOpen(false);
+                void trackPublicEvent("cta_click", "nav_cta");
                 goToSection(item.sectionId);
               }}
             >

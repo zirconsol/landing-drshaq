@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import CatalogCartButton from "@/components/CatalogCartButton";
 import CatalogCartDrawer from "@/components/CatalogCartDrawer";
 import { drops } from "@/data/drops";
+import { trackPublicEvent } from "@/lib/public-analytics";
 
 export default function CatalogTopbar() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -100,6 +101,9 @@ export default function CatalogTopbar() {
                   className={`catalog-nav-link ${
                     activeDropSlug === drop.slug ? "is-active" : ""
                   }`}
+                  onClick={() => {
+                    void trackPublicEvent("cta_click", "nav_cta");
+                  }}
                 >
                   {drop.name}
                 </Link>
@@ -121,6 +125,9 @@ export default function CatalogTopbar() {
                         href={`/drops/${activeDrop.slug}?cat=${encodeURIComponent(
                           subcategory.toLowerCase()
                         )}`}
+                        onClick={() => {
+                          void trackPublicEvent("cta_click", "nav_cta");
+                        }}
                       >
                         {subcategory}
                       </Link>
@@ -134,6 +141,9 @@ export default function CatalogTopbar() {
                         <Link
                           key={`${activeDrop.slug}-${brand}`}
                           href={`/drops/${activeDrop.slug}`}
+                          onClick={() => {
+                            void trackPublicEvent("cta_click", "nav_cta");
+                          }}
                         >
                           {brand}
                         </Link>
@@ -146,7 +156,13 @@ export default function CatalogTopbar() {
                   <div className="catalog-nav-col">
                     <h4>Colores</h4>
                     {activeDrop.colors.map((color) => (
-                      <Link key={`${activeDrop.slug}-${color}`} href={`/drops/${activeDrop.slug}`}>
+                      <Link
+                        key={`${activeDrop.slug}-${color}`}
+                        href={`/drops/${activeDrop.slug}`}
+                        onClick={() => {
+                          void trackPublicEvent("cta_click", "nav_cta");
+                        }}
+                      >
                         {color}
                       </Link>
                     ))}
@@ -176,6 +192,9 @@ export default function CatalogTopbar() {
                     href={`/drops/${drop.slug}?cat=${encodeURIComponent(
                       subcategory.toLowerCase()
                     )}`}
+                    onClick={() => {
+                      void trackPublicEvent("cta_click", "nav_cta");
+                    }}
                   >
                     {subcategory}
                   </Link>

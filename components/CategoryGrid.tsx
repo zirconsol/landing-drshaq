@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { trackPublicEvent } from "@/lib/public-analytics";
 
 export type Category = {
   name: string;
@@ -84,6 +85,9 @@ export default function CategoryGrid({
           className="category-card"
           style={{ ["--delay" as string]: `${index * 90}ms` }}
           onTouchStart={handleTouch}
+          onClick={() => {
+            void trackPublicEvent("cta_click", "category_grid");
+          }}
         >
           <img src={category.image} alt={category.name} />
           <div className="category-content">

@@ -2,10 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import { useCart } from "@/components/CartProvider";
 import WhatsappMark from "@/components/WhatsappMark";
 import { formatPrice } from "@/data/drops";
+import { trackPublicEvent } from "@/lib/public-analytics";
+import { submitPublicRequestFromCart } from "@/lib/public-requests";
 import { buildWhatsappLink } from "@/lib/whatsapp";
 
 export default function CatalogCartDrawer({
@@ -17,6 +19,23 @@ export default function CatalogCartDrawer({
 }) {
   const { lines, totalItems, subtotal, updateQuantity, removeLine } = useCart();
   const whatsappHref = buildWhatsappLink(lines, subtotal);
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+
+  const handleCheckoutClick = async () => {
+    if (isSubmittingOrder || lines.length === 0) return;
+    setIsSubmittingOrder(true);
+    void trackPublicEvent("cta_click", "floating_whatsapp");
+    const result = await submitPublicRequestFromCart(lines, "floating_whatsapp");
+    setIsSubmittingOrder(false);
+    if (!result.ok) {
+      console.error("No se pudo crear el pedido público", result);
+      return;
+    }
+    const popup = window.open(whatsappHref, "_blank", "noopener,noreferrer");
+    if (!popup) {
+      window.location.assign(whatsappHref);
+    }
+  };
 
   return (
     <>
@@ -111,15 +130,15 @@ export default function CatalogCartDrawer({
             <strong>{formatPrice(subtotal)}</strong>
           </div>
 
-          <a
-            href={whatsappHref}
-            target="_blank"
-            rel="noreferrer"
+          <button
+            type="button"
             className="whatsapp-checkout"
+            onClick={handleCheckoutClick}
+            disabled={isSubmittingOrder}
           >
             <WhatsappMark size={18} />
-            Solicitar Pedido
-          </a>
+            {isSubmittingOrder ? "Creando pedido..." : "Solicitar Pedido"}
+          </button>
 
           <div className="cart-drawer-links">
             <button type="button" onClick={onClose}>

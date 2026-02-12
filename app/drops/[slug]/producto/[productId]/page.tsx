@@ -1,15 +1,13 @@
 import { notFound } from "next/navigation";
 import CatalogTopbar from "@/components/CatalogTopbar";
 import ProductDetailTemplate from "@/components/ProductDetailTemplate";
-import { catalogItems, drops, getCatalogItem } from "@/data/drops";
+import { drops } from "@/data/drops";
+import { getCatalogProductById } from "@/lib/catalog-api";
 
 type Params = { slug: string; productId: string };
 
 export function generateStaticParams() {
-  return catalogItems.map((item) => ({
-    slug: item.dropSlug,
-    productId: item.id,
-  }));
+  return [];
 }
 
 export default async function ProductPage({
@@ -24,7 +22,7 @@ export default async function ProductPage({
     notFound();
   }
 
-  const product = getCatalogItem(slug, productId);
+  const product = await getCatalogProductById(slug, productId);
   if (!product) {
     notFound();
   }

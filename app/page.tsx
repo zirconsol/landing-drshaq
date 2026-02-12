@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type { CSSProperties } from "react";
 import CategoryGrid from "@/components/CategoryGrid";
+import TrackedLink from "@/components/TrackedLink";
 
 const categories = [
   {
@@ -37,12 +37,12 @@ export default function HomePage() {
             Actitud urbana. Todos los días.
           </p>
           <div className="hero-actions fade-up delay-2">
-            <Link className="button-primary" href="#catalogo">
+            <TrackedLink className="button-primary" href="#catalogo" source="hero_cta">
               Ver Drops
-            </Link>
-            <Link className="button-secondary" href="/blog">
+            </TrackedLink>
+            <TrackedLink className="button-secondary" href="/blog" source="hero_cta">
               Ir al blog
-            </Link>
+            </TrackedLink>
           </div>
         </div>
       </section>
@@ -71,9 +71,9 @@ export default function HomePage() {
             se anticipó el próximo colorway: “Resiliencia White”.
           </p>
           <div className="hero-actions">
-            <Link className="button-secondary" href="/blog">
+            <TrackedLink className="button-secondary" href="/blog" source="hero_cta">
               Leer más
-            </Link>
+            </TrackedLink>
           </div>
         </div>
       </section>

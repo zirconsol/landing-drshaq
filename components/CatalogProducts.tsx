@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { useCart } from "@/components/CartProvider";
 import { formatPrice, type CatalogItem } from "@/data/drops";
+import { trackPublicEvent } from "@/lib/public-analytics";
 
 type Props = {
   items: CatalogItem[];
@@ -36,6 +37,7 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
       product: item,
       selectedSize,
       selectedColor,
+      source: "product_card",
     });
     setAddedFeedback((current) => ({ ...current, [item.id]: true }));
     window.setTimeout(
@@ -74,6 +76,7 @@ export default function CatalogProducts({ items, dropSlug }: Props) {
   };
 
   const goToProduct = (productId: string) => {
+    void trackPublicEvent("cta_click", "catalog_grid", { productId });
     router.push(`/drops/${dropSlug}/producto/${productId}`);
   };
 

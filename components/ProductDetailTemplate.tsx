@@ -29,6 +29,7 @@ export default function ProductDetailTemplate({
       quantity: 1,
       selectedSize,
       selectedColor: activeColor,
+      source: "product_detail",
     });
     setFeedback("Agregado al carrito");
     window.setTimeout(() => setFeedback(""), 1200);
@@ -120,4 +121,3 @@ export default function ProductDetailTemplate({
     </section>
   );
 }
-
